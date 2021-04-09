@@ -18,6 +18,8 @@ import (
 
 const DefaultEditor = "vim"
 
+var VaultFile string
+
 func getPreferredEditor() string {
 	editor := os.Getenv("EDITOR")
 	if editor == "" {
@@ -270,7 +272,7 @@ func main() {
 	}
 
 	rootCmd := &cobra.Command{
-		Use:   "env-vault [OPTIONS] [COMMAND]",
+		Use:   "env-vault [flags] [command]",
 		Short: "Launch a subprocess with environment variables from an encrypted file",
 		Long: `env-vault provides a convenient way to launch a subprocess
 with environment variables populated from an encrypted file.`,
@@ -288,7 +290,7 @@ with environment variables populated from an encrypted file.`,
 			}
 			fmt.Println()
 
-			filename := "secrets.yml"
+			filename := VaultFile
 			enc, err := ioutil.ReadFile(filename)
 			if err != nil {
 				return err
@@ -308,6 +310,8 @@ with environment variables populated from an encrypted file.`,
 			return c.Run()
 		},
 	}
+	rootCmd.Flags().StringVar(&VaultFile, "vault", "secrets.env", "filename to read secrets from")
+
 	rootCmd.AddCommand(createCmd)
 	rootCmd.AddCommand(viewCmd)
 	rootCmd.AddCommand(editCmd)
