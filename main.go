@@ -301,8 +301,13 @@ with environment variables populated from an encrypted file.`,
 				return err
 			}
 
-			c := exec.Command(executable)
-			c.Env = strings.Split(envs, "\n")
+			// TODO: add flag for stripping current env vars
+			newEnv := make([]string, 0)
+			newEnv = append(newEnv, os.Environ()...)
+			newEnv = append(newEnv, strings.Split(envs, "\n")...)
+
+			c := exec.Command(executable, args[1:]...)
+			c.Env = newEnv
 			c.Stdin = os.Stdin
 			c.Stdout = os.Stdout
 			c.Stderr = os.Stderr
