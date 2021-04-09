@@ -139,6 +139,7 @@ func main() {
 			if err != nil {
 				return err
 			}
+			fmt.Println()
 
 			// cipher key should be 32 bit long, so lets generate one by hashing password
 			key := sha256.Sum256(bytepw)
@@ -192,6 +193,82 @@ func main() {
 		},
 	}
 
+	editCmd := &cobra.Command{
+		Use:   "edit [flags] filename",
+		Short: "Edit encrypted file",
+		Args:  cobra.MinimumNArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// check if ENVCOMPOSE_PASSWORD_FILE was set or otherwise ask for password
+			fmt.Fprintf(os.Stdin, "Password: ")
+			bytepw, err := term.ReadPassword(int(os.Stdin.Fd()))
+			if err != nil {
+				return err
+			}
+			fmt.Println()
+
+			// cipher key should be 32 bit long, so lets generate one by hashing password
+			key := sha256.Sum256(bytepw)
+
+			block, err := aes.NewCipher(key[:])
+			if err != nil {
+				return err
+			}
+
+			aesGCM, err := cipher.NewGCM(block)
+			if err != nil {
+				return err
+			}
+
+			enc, err := ioutil.ReadFile(args[0])
+			if err != nil {
+				return err
+			}
+
+			nonceSize := aesGCM.NonceSize()
+
+			nonce, ciphertext := enc[:nonceSize], enc[nonceSize:]
+
+			plaintext, err := aesGCM.Open(nil, nonce, ciphertext, nil)
+			if err != nil {
+				return err
+			}
+
+			file, err := ioutil.TempFile(os.TempDir(), "env-vault-*")
+			if err != nil {
+				return err
+			}
+
+			filename := file.Name()
+			defer os.Remove(filename)
+
+			_, err = file.Write(plaintext)
+			if err != nil {
+				return err
+			}
+
+			if err = file.Close(); err != nil {
+				return err
+			}
+
+			if err = openFileInEditor(filename); err != nil {
+				return err
+			}
+
+			tmpPlaintext, err := ioutil.ReadFile(filename)
+			if err != nil {
+				return err
+			}
+
+			ciphertext = aesGCM.Seal(nonce, nonce, tmpPlaintext, nil)
+
+			if err := ioutil.WriteFile(args[0], ciphertext, 0700); err != nil {
+				return err
+			}
+
+			return nil
+		},
+	}
+
 	rootCmd := &cobra.Command{
 		Use:   "env-vault [OPTIONS] [COMMAND]",
 		Short: "Launch a subprocess with environment variables from an encrypted file",
@@ -209,6 +286,7 @@ with environment variables populated from an encrypted file.`,
 			if err != nil {
 				return err
 			}
+			fmt.Println()
 
 			filename := "secrets.yml"
 			enc, err := ioutil.ReadFile(filename)
@@ -232,6 +310,7 @@ with environment variables populated from an encrypted file.`,
 	}
 	rootCmd.AddCommand(createCmd)
 	rootCmd.AddCommand(viewCmd)
+	rootCmd.AddCommand(editCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
