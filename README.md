@@ -88,13 +88,13 @@ Wooo!!! :rocket:
 
 ## Advanced Use
 
-You can further ease the workflow by setting an environment variable to use as the default password for decrypting vaults:
+You can further ease the workflow by setting the `ENV_VAULT_PASSWORD` environment variable. env-vault will use it to decrypt vaults automatically and you won't get prompted for a password any time you interact with env-vault.
 
 ```sh
 export ENV_VAULT_PASSWORD=somepassword
 ```
 
-This works exceptionally well when paired with Makefiles:
+This works exceptionally well when docker-compose is used with Makefiles:
 
 ```Makefile
 up:
