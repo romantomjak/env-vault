@@ -35,7 +35,7 @@ func (v *Vault) Read() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return Decrypt(ciphertext, []byte(v.password))
+	return decrypt(ciphertext, []byte(v.password))
 }
 
 func (v *Vault) Write(b []byte) error {
@@ -45,7 +45,7 @@ func (v *Vault) Write(b []byte) error {
 	if _, err := v.file.Seek(0, 0); err != nil {
 		return err
 	}
-	ciphertext, err := Encrypt(b, []byte(v.password))
+	ciphertext, err := encrypt(b, []byte(v.password))
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func cipherKey(password []byte) []byte {
 	return key[:]
 }
 
-func Encrypt(bytes, password []byte) ([]byte, error) {
+func encrypt(bytes, password []byte) ([]byte, error) {
 	block, err := aes.NewCipher(cipherKey(password))
 	if err != nil {
 		return nil, err
@@ -86,7 +86,7 @@ func Encrypt(bytes, password []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func Decrypt(bytes, password []byte) ([]byte, error) {
+func decrypt(bytes, password []byte) ([]byte, error) {
 	block, err := aes.NewCipher(cipherKey(password))
 	if err != nil {
 		return nil, err
