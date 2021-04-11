@@ -11,16 +11,15 @@ import (
 	"golang.org/x/term"
 )
 
-var VaultFile string
-
 var rootCmd = &cobra.Command{
-	Use:   "env-vault [flags] [command]",
+	Use:   "env-vault [vault] [command]",
 	Short: "Launch a subprocess with environment variables from an encrypted file",
 	Long: `env-vault provides a convenient way to launch a subprocess
 with environment variables populated from an encrypted file.`,
-	Args: cobra.MinimumNArgs(1),
+	Args:                  cobra.MinimumNArgs(2),
+	DisableFlagsInUseLine: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		executable, err := exec.LookPath(args[0])
+		executable, err := exec.LookPath(args[1])
 		if err != nil {
 			return err
 		}
@@ -32,7 +31,7 @@ with environment variables populated from an encrypted file.`,
 		}
 		fmt.Println()
 
-		v, err := vault.Open(VaultFile, string(bytepw))
+		v, err := vault.Open(args[0], string(bytepw))
 		if err != nil {
 			return err
 		}
@@ -47,7 +46,7 @@ with environment variables populated from an encrypted file.`,
 		newEnv = append(newEnv, os.Environ()...)
 		newEnv = append(newEnv, strings.Split(string(plaintext), "\n")...)
 
-		c := exec.Command(executable, args[1:]...)
+		c := exec.Command(executable, args[2:]...)
 		c.Env = newEnv
 		c.Stdin = os.Stdin
 		c.Stdout = os.Stdout
@@ -58,8 +57,6 @@ with environment variables populated from an encrypted file.`,
 }
 
 func Execute() error {
-	rootCmd.Flags().StringVar(&VaultFile, "vault", "secrets.env", "filename to read secrets from")
-
 	rootCmd.AddCommand(createCmd)
 	rootCmd.AddCommand(viewCmd)
 	rootCmd.AddCommand(editCmd)
