@@ -6,7 +6,7 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"crypto/sha256"
-	"encoding/hex"
+	"encoding/base64"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -31,9 +31,9 @@ func ReadFile(filename string, password []byte) ([]byte, error) {
 
 	body := data[firstNewLine+1:]
 
-	// unhexlify body
-	ciphertext := make([]byte, hex.DecodedLen(len(body)))
-	n, err := hex.Decode(ciphertext, body)
+	// decode base64 encoded bytes
+	ciphertext := make([]byte, base64.StdEncoding.DecodedLen(len(body)))
+	n, err := base64.StdEncoding.Decode(ciphertext, body)
 	if err != nil {
 		return nil, err
 	}
@@ -50,9 +50,9 @@ func WriteFile(filename string, data, password []byte) error {
 
 	header := "env-vault;1.0;AES256\n"
 
-	// hexlify body
-	body := make([]byte, hex.EncodedLen(len(ciphertext)))
-	hex.Encode(body, ciphertext)
+	// encode bytes as base64
+	body := make([]byte, base64.StdEncoding.EncodedLen(len(ciphertext)))
+	base64.StdEncoding.Encode(body, ciphertext)
 
 	buf := bytes.NewBufferString(header)
 	buf.Write(body)
