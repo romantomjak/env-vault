@@ -1,19 +1,44 @@
 package vault
 
 import (
+	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/hex"
+	"fmt"
 	"io"
 	"io/ioutil"
+	"strings"
 )
 
 func ReadFile(filename string, password []byte) ([]byte, error) {
-	ciphertext, err := ioutil.ReadFile(filename)
+	data, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
+
+	firstNewLine := bytes.IndexByte(data, '\n')
+	if firstNewLine < 0 {
+		return nil, fmt.Errorf("vault header not found")
+	}
+
+	header := data[0:firstNewLine]
+	if err := checkHeader(header); err != nil {
+		return nil, err
+	}
+
+	body := data[firstNewLine+1:]
+
+	// unhexlify body
+	ciphertext := make([]byte, hex.DecodedLen(len(body)))
+	n, err := hex.Decode(ciphertext, body)
+	if err != nil {
+		return nil, err
+	}
+	ciphertext = ciphertext[0:n]
+
 	return decrypt(ciphertext, password)
 }
 
@@ -22,7 +47,31 @@ func WriteFile(filename string, data, password []byte) error {
 	if err != nil {
 		return err
 	}
-	return ioutil.WriteFile(filename, ciphertext, 0700)
+
+	header := "env-vault;1.0;AES256\n"
+
+	// hexlify body
+	body := make([]byte, hex.EncodedLen(len(ciphertext)))
+	hex.Encode(body, ciphertext)
+
+	buf := bytes.NewBufferString(header)
+	buf.Write(body)
+	return ioutil.WriteFile(filename, buf.Bytes(), 0700)
+}
+
+func checkHeader(data []byte) error {
+	header := string(data)
+	lines := strings.SplitN(header, ";", 3)
+	if lines[0] != "env-vault" {
+		return fmt.Errorf("unknown format ID. was the file encrypted with env-vault?")
+	}
+	if lines[1] != "1.0" {
+		return fmt.Errorf("incompatible file version. only 1.0 is supported for now")
+	}
+	if lines[2] != "AES256" {
+		return fmt.Errorf("unsupported cipher algorithm. only AES256 is supported for now")
+	}
+	return nil
 }
 
 // cipher key should be 32 bit long, so lets generate one by hashing password
