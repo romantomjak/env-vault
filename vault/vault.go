@@ -8,11 +8,14 @@ import (
 	"io"
 )
 
-func Encrypt(bytes, password []byte) ([]byte, error) {
-	// cipher key should be 32 bit long, so lets generate one by hashing password
+// cipher key should be 32 bit long, so lets generate one by hashing password
+func cipherKey(password []byte) []byte {
 	key := sha256.Sum256(password)
+	return key[:]
+}
 
-	block, err := aes.NewCipher(key[:])
+func Encrypt(bytes, password []byte) ([]byte, error) {
+	block, err := aes.NewCipher(cipherKey(password))
 	if err != nil {
 		return nil, err
 	}
@@ -32,11 +35,8 @@ func Encrypt(bytes, password []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func Decrypt(enc, password []byte) ([]byte, error) {
-	// cipher key should be 32 bit long, so lets generate one by hashing password
-	key := sha256.Sum256(password)
-
-	block, err := aes.NewCipher(key[:])
+func Decrypt(bytes, password []byte) ([]byte, error) {
+	block, err := aes.NewCipher(cipherKey(password))
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func Decrypt(enc, password []byte) ([]byte, error) {
 
 	nonceSize := aesGCM.NonceSize()
 
-	nonce, ciphertext := enc[:nonceSize], enc[nonceSize:]
+	nonce, ciphertext := bytes[:nonceSize], bytes[nonceSize:]
 
 	plaintext, err := aesGCM.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
