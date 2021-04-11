@@ -7,56 +7,22 @@ import (
 	"crypto/sha256"
 	"io"
 	"io/ioutil"
-	"os"
 )
 
-type Vault struct {
-	file     *os.File
-	password string
-}
-
-func Open(filename, password string) (*Vault, error) {
-	f, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE, 0700)
+func ReadFile(filename string, password []byte) ([]byte, error) {
+	ciphertext, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
-
-	// TODO: check file header
-
-	v := &Vault{
-		file:     f,
-		password: password,
-	}
-	return v, nil
+	return decrypt(ciphertext, password)
 }
 
-func (v *Vault) Read() ([]byte, error) {
-	ciphertext, err := ioutil.ReadAll(v.file)
-	if err != nil {
-		return nil, err
-	}
-	return decrypt(ciphertext, []byte(v.password))
-}
-
-func (v *Vault) Write(b []byte) error {
-	if err := v.file.Truncate(0); err != nil {
-		return err
-	}
-	if _, err := v.file.Seek(0, 0); err != nil {
-		return err
-	}
-	ciphertext, err := encrypt(b, []byte(v.password))
+func WriteFile(filename string, data, password []byte) error {
+	ciphertext, err := encrypt(data, password)
 	if err != nil {
 		return err
 	}
-	if _, err := v.file.Write(ciphertext); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (v *Vault) Close() error {
-	return v.file.Close()
+	return ioutil.WriteFile(filename, ciphertext, 0700)
 }
 
 // cipher key should be 32 bit long, so lets generate one by hashing password

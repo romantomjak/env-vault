@@ -43,16 +43,7 @@ var createCmd = &cobra.Command{
 			return err
 		}
 
-		v, err := vault.Open(args[0], string(bytepw))
-		if err != nil {
-			return err
-		}
-
-		if err := v.Write(bytes); err != nil {
-			return err
-		}
-
-		if err = v.Close(); err != nil {
+		if err := vault.WriteFile(args[0], bytes, bytepw); err != nil {
 			return err
 		}
 

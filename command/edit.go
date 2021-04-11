@@ -23,12 +23,7 @@ var editCmd = &cobra.Command{
 		}
 		fmt.Println()
 
-		v, err := vault.Open(args[0], string(bytepw))
-		if err != nil {
-			return err
-		}
-
-		plaintext, err := v.Read()
+		plaintext, err := vault.ReadFile(args[0], bytepw)
 		if err != nil {
 			return err
 		}
@@ -59,11 +54,7 @@ var editCmd = &cobra.Command{
 			return err
 		}
 
-		if err := v.Write(modifiedplaintext); err != nil {
-			return err
-		}
-
-		if err = v.Close(); err != nil {
+		if err := vault.WriteFile(args[0], modifiedplaintext, bytepw); err != nil {
 			return err
 		}
 

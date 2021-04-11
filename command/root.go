@@ -31,12 +31,7 @@ with environment variables populated from an encrypted file.`,
 		}
 		fmt.Println()
 
-		v, err := vault.Open(args[0], string(bytepw))
-		if err != nil {
-			return err
-		}
-
-		plaintext, err := v.Read()
+		vaultbytes, err := vault.ReadFile(args[0], bytepw)
 		if err != nil {
 			return err
 		}
@@ -44,7 +39,7 @@ with environment variables populated from an encrypted file.`,
 		// TODO: add flag for stripping current env vars
 		newEnv := make([]string, 0)
 		newEnv = append(newEnv, os.Environ()...)
-		newEnv = append(newEnv, strings.Split(string(plaintext), "\n")...)
+		newEnv = append(newEnv, strings.Split(string(vaultbytes), "\n")...)
 
 		c := exec.Command(executable, args[2:]...)
 		c.Env = newEnv
