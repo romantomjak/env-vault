@@ -40,12 +40,12 @@ with environment variables populated from an encrypted file.`,
 			return err
 		}
 
-		bytepw, err := passwordPrompt("Password: ", os.Stdin, os.Stdout)
+		password, err := passwordPrompt("Password: ", os.Stdin, os.Stdout)
 		if err != nil {
 			return err
 		}
 
-		vaultbytes, err := vault.ReadFile(args[0], bytepw)
+		vaultbytes, err := vault.ReadFile(args[0], password)
 		if err != nil {
 			return err
 		}

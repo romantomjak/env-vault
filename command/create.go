@@ -15,17 +15,17 @@ var createCmd = &cobra.Command{
 	Short: "Create new encrypted file",
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		bytepw, err := passwordPrompt("Password: ", os.Stdin, os.Stdout)
+		password, err := passwordPrompt("Password: ", os.Stdin, os.Stdout)
 		if err != nil {
 			return err
 		}
 
-		bytepwconfirm, err := passwordPrompt("Confirm new vault password: ", os.Stdin, os.Stdout)
+		password2, err := passwordPrompt("Confirm new vault password: ", os.Stdin, os.Stdout)
 		if err != nil {
 			return err
 		}
 
-		if !bytes.Equal(bytepw, bytepwconfirm) {
+		if !bytes.Equal(password, password2) {
 			return fmt.Errorf("passwords do not match")
 		}
 
@@ -50,7 +50,7 @@ var createCmd = &cobra.Command{
 			return err
 		}
 
-		if err := vault.WriteFile(args[0], bytes, bytepw); err != nil {
+		if err := vault.WriteFile(args[0], bytes, password); err != nil {
 			return err
 		}
 

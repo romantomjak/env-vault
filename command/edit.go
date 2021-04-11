@@ -13,12 +13,12 @@ var editCmd = &cobra.Command{
 	Short: "Edit encrypted file",
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		bytepw, err := passwordPrompt("Password: ", os.Stdin, os.Stdout)
+		password, err := passwordPrompt("Password: ", os.Stdin, os.Stdout)
 		if err != nil {
 			return err
 		}
 
-		plaintext, err := vault.ReadFile(args[0], bytepw)
+		plaintext, err := vault.ReadFile(args[0], password)
 		if err != nil {
 			return err
 		}
@@ -49,7 +49,7 @@ var editCmd = &cobra.Command{
 			return err
 		}
 
-		if err := vault.WriteFile(args[0], modifiedplaintext, bytepw); err != nil {
+		if err := vault.WriteFile(args[0], modifiedplaintext, password); err != nil {
 			return err
 		}
 

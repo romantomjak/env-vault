@@ -16,12 +16,12 @@ var viewCmd = &cobra.Command{
 	Short: "View encrypted file",
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		bytepw, err := passwordPrompt("Password: ", os.Stdin, os.Stdout)
+		password, err := passwordPrompt("Password: ", os.Stdin, os.Stdout)
 		if err != nil {
 			return err
 		}
 
-		plaintext, err := vault.ReadFile(args[0], bytepw)
+		plaintext, err := vault.ReadFile(args[0], password)
 		if err != nil {
 			return err
 		}
