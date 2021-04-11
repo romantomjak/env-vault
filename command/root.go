@@ -79,6 +79,7 @@ func Execute() error {
 	rootCmd.AddCommand(rekeyCmd)
 	rootCmd.AddCommand(decryptCmd)
 	rootCmd.AddCommand(encryptCmd)
+	rootCmd.AddCommand(versionCmd)
 
 	return rootCmd.Execute()
 }
