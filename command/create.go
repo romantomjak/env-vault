@@ -48,7 +48,7 @@ var createCmd = &cobra.Command{
 			return err
 		}
 
-		if _, err := v.Write(bytes); err != nil {
+		if err := v.Write(bytes); err != nil {
 			return err
 		}
 

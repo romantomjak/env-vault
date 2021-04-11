@@ -31,19 +31,28 @@ func Open(filename, password string) (*Vault, error) {
 }
 
 func (v *Vault) Read() ([]byte, error) {
-	cipherText, err := ioutil.ReadAll(v.file)
+	ciphertext, err := ioutil.ReadAll(v.file)
 	if err != nil {
 		return nil, err
 	}
-	return Decrypt(cipherText, []byte(v.password))
+	return Decrypt(ciphertext, []byte(v.password))
 }
 
-func (v *Vault) Write(b []byte) (n int, err error) {
-	cipherText, err := Encrypt(b, []byte(v.password))
-	if err != nil {
-		return 0, err
+func (v *Vault) Write(b []byte) error {
+	if err := v.file.Truncate(0); err != nil {
+		return err
 	}
-	return v.file.Write(cipherText)
+	if _, err := v.file.Seek(0, 0); err != nil {
+		return err
+	}
+	ciphertext, err := Encrypt(b, []byte(v.password))
+	if err != nil {
+		return err
+	}
+	if _, err := v.file.Write(ciphertext); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (v *Vault) Close() error {

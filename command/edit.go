@@ -23,12 +23,12 @@ var editCmd = &cobra.Command{
 		}
 		fmt.Println()
 
-		enc, err := ioutil.ReadFile(args[0])
+		v, err := vault.Open(args[0], string(bytepw))
 		if err != nil {
 			return err
 		}
 
-		plaintext, err := vault.Decrypt(enc, bytepw)
+		plaintext, err := v.Read()
 		if err != nil {
 			return err
 		}
@@ -54,17 +54,16 @@ var editCmd = &cobra.Command{
 			return err
 		}
 
-		tmpPlaintext, err := ioutil.ReadFile(filename)
+		modifiedplaintext, err := ioutil.ReadFile(filename)
 		if err != nil {
 			return err
 		}
 
-		ciphertext, err := vault.Encrypt(tmpPlaintext, bytepw)
-		if err != nil {
+		if err := v.Write(modifiedplaintext); err != nil {
 			return err
 		}
 
-		if err := ioutil.WriteFile(args[0], ciphertext, 0700); err != nil {
+		if err = v.Close(); err != nil {
 			return err
 		}
 
