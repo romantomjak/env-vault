@@ -90,7 +90,7 @@ Wooo!!! :rocket:
 
 You can further ease the workflow by setting an environment variable to use as the default password for decrypting vaults:
 
-```
+```sh
 export ENV_VAULT_PASSWORD=somepassword
 ```
 
@@ -103,7 +103,7 @@ up:
 
 so now you can run:
 
-```
+```sh
 make up
 ```
 
