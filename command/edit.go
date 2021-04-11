@@ -1,13 +1,11 @@
 package command
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 
 	"github.com/romantomjak/env-vault/vault"
 	"github.com/spf13/cobra"
-	"golang.org/x/term"
 )
 
 var editCmd = &cobra.Command{
@@ -15,13 +13,10 @@ var editCmd = &cobra.Command{
 	Short: "Edit encrypted file",
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// check if ENVCOMPOSE_PASSWORD_FILE was set or otherwise ask for password
-		fmt.Fprintf(os.Stdin, "Password: ")
-		bytepw, err := term.ReadPassword(int(os.Stdin.Fd()))
+		bytepw, err := passwordPrompt("Password: ", os.Stdin, os.Stdout)
 		if err != nil {
 			return err
 		}
-		fmt.Println()
 
 		plaintext, err := vault.ReadFile(args[0], bytepw)
 		if err != nil {

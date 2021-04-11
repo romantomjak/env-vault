@@ -8,7 +8,6 @@ import (
 
 	"github.com/romantomjak/env-vault/vault"
 	"github.com/spf13/cobra"
-	"golang.org/x/term"
 )
 
 var createCmd = &cobra.Command{
@@ -16,20 +15,15 @@ var createCmd = &cobra.Command{
 	Short: "Create new encrypted file",
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// check if ENVCOMPOSE_PASSWORD_FILE was set or otherwise ask for password
-		fmt.Fprintf(os.Stdin, "New vault password: ")
-		bytepw, err := term.ReadPassword(int(os.Stdin.Fd()))
+		bytepw, err := passwordPrompt("Password: ", os.Stdin, os.Stdout)
 		if err != nil {
 			return err
 		}
-		fmt.Println()
 
-		fmt.Fprintf(os.Stdin, "Confirm new vault password: ")
-		bytepwconfirm, err := term.ReadPassword(int(os.Stdin.Fd()))
+		bytepwconfirm, err := passwordPrompt("Confirm new vault password: ", os.Stdin, os.Stdout)
 		if err != nil {
 			return err
 		}
-		fmt.Println()
 
 		if !bytes.Equal(bytepw, bytepwconfirm) {
 			return fmt.Errorf("passwords do not match")

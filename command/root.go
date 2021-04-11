@@ -11,6 +11,22 @@ import (
 	"golang.org/x/term"
 )
 
+func passwordPrompt(prompt string, stdin, stdout *os.File) ([]byte, error) {
+	// check if ENVCOMPOSE_PASSWORD_FILE was set or otherwise ask for password
+
+	fmt.Fprint(stdout, prompt)
+
+	password, err := term.ReadPassword(int(stdin.Fd()))
+	if err != nil {
+		return nil, err
+	}
+
+	// ReadPassword skips newline
+	fmt.Fprintln(stdout)
+
+	return password, nil
+}
+
 var rootCmd = &cobra.Command{
 	Use:   "env-vault [vault] [command]",
 	Short: "Launch a subprocess with environment variables from an encrypted file",
@@ -24,12 +40,10 @@ with environment variables populated from an encrypted file.`,
 			return err
 		}
 
-		fmt.Fprintf(os.Stdin, "Password: ")
-		bytepw, err := term.ReadPassword(int(os.Stdin.Fd()))
+		bytepw, err := passwordPrompt("Password: ", os.Stdin, os.Stdout)
 		if err != nil {
 			return err
 		}
-		fmt.Println()
 
 		vaultbytes, err := vault.ReadFile(args[0], bytepw)
 		if err != nil {
