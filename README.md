@@ -15,7 +15,7 @@ or grab a binary from [releases](https://github.com/romantomjak/env-vault/releas
 
 ## Usage
 
-env-vault allows to do pretty cool stuff like injecting secrets into docker-compose files, but in it's general form it looks like this:
+env-vault allows to do pretty cool stuff like injecting secrets into docker-compose files, but in it's general form use it like this:
 
 ```
 env-vault <vault> <program>
