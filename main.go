@@ -12,6 +12,4 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-
-	// encrypt to encryp existing file
 }

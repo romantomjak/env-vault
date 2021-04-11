@@ -31,7 +31,7 @@ var rekeyCmd = &cobra.Command{
 		}
 
 		if !bytes.Equal(newpassword, newpassword2) {
-			return fmt.Errorf("new passwords do not match")
+			return fmt.Errorf("passwords do not match")
 		}
 
 		plaintext, err := vault.ReadFile(args[0], password)
