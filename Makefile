@@ -4,7 +4,7 @@ VERSION := 0.1.0
 GIT_COMMIT := $(shell git rev-parse --short HEAD)
 
 GO_PKGS := $(shell go list ./...)
-GO_LDFLAGS := "-X github.com/romantomjak/env-vault/command.Version=$(VERSION) -X github.com/romantomjak/env-vault/command.GitCommit=$(GIT_COMMIT)"
+GO_LDFLAGS := "-X github.com/romantomjak/env-vault/version.Version=$(VERSION) -X github.com/romantomjak/env-vault/version.GitCommit=$(GIT_COMMIT)"
 
 PLATFORMS := darwin linux windows
 os = $(word 1, $@)
