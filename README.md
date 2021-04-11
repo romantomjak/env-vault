@@ -15,7 +15,7 @@ or grab a binary from [releases](https://github.com/romantomjak/env-vault/releas
 
 ## Usage
 
-env-vault allows to do pretty cool stuff like injecting secrets into docker-compose files, but in it's general form use it like this:
+env-vault allows to do pretty cool stuff like injecting secrets into docker-compose files, but in general use it like so:
 
 ```
 env-vault <vault> <program>
@@ -54,13 +54,13 @@ This is an encrypted file created with env-vault. Vaults are created with the `c
 env-vault create prod.env
 ```
 
-Running the command above will prompt for a new password and then open your favorite $EDITOR to input the environment variables. Let's add something for the `POSTGRES_PASSWORD` secret now:
+Running the command above will prompt for a new password and then open your favorite `$EDITOR` to input the environment variables. Let's add the `POSTGRES_PASSWORD` secret now:
 
 ```ini
 POSTGRES_PASSWORD=passwordformyproject
 ```
 
-Save the file and close your editor. env-vault will encrypt the plain text using AES256-GCM symmetrical encryption for safe storage.
+Save the file and close your editor. env-vault will encrypt the plain text using AES256-GCM symmetrical encryption.
 
 ### docker-compose
 
