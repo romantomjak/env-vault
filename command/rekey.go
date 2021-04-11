@@ -11,7 +11,7 @@ import (
 
 var rekeyCmd = &cobra.Command{
 	Use:                   "rekey [filename]",
-	Short:                 "Re-key an encrypted file",
+	Short:                 "Change password of an encrypted file",
 	Args:                  cobra.ExactArgs(1),
 	DisableFlagsInUseLine: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
