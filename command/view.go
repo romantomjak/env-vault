@@ -13,9 +13,10 @@ import (
 const DefaultEditor = "vim"
 
 var viewCmd = &cobra.Command{
-	Use:   "view [flags] filename",
-	Short: "View encrypted file",
-	Args:  cobra.MinimumNArgs(1),
+	Use:                   "view [filename]",
+	Short:                 "View encrypted file",
+	Args:                  cobra.ExactArgs(1),
+	DisableFlagsInUseLine: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		password, err := passwordFromEnvOrPrompt()
 		if err != nil {

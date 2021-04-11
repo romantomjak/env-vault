@@ -10,9 +10,10 @@ import (
 )
 
 var editCmd = &cobra.Command{
-	Use:   "edit [flags] filename",
-	Short: "Edit encrypted file",
-	Args:  cobra.MinimumNArgs(1),
+	Use:                   "edit [filename]",
+	Short:                 "Edit encrypted file",
+	Args:                  cobra.ExactArgs(1),
+	DisableFlagsInUseLine: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		password, err := passwordFromEnvOrPrompt()
 		if err != nil {

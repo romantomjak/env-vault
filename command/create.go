@@ -12,9 +12,10 @@ import (
 )
 
 var createCmd = &cobra.Command{
-	Use:   "create [flags] filename",
-	Short: "Create new encrypted file",
-	Args:  cobra.MinimumNArgs(1),
+	Use:                   "create [filename]",
+	Short:                 "Create new encrypted file",
+	Args:                  cobra.ExactArgs(1),
+	DisableFlagsInUseLine: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		password, err := passwordPrompt("Password: ")
 		if err != nil {
