@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/romantomjak/env-vault/vault"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 )
@@ -78,9 +79,12 @@ var editCmd = &cobra.Command{
 			return err
 		}
 
-		ciphertext = aesGCM.Seal(nonce, nonce, tmpPlaintext, nil)
+		ciphertext2, err := vault.Encrypt(tmpPlaintext, bytepw)
+		if err != nil {
+			return err
+		}
 
-		if err := ioutil.WriteFile(args[0], ciphertext, 0700); err != nil {
+		if err := ioutil.WriteFile(args[0], ciphertext2, 0700); err != nil {
 			return err
 		}
 

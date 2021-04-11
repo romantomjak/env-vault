@@ -1,15 +1,11 @@
 package command
 
 import (
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/rand"
-	"crypto/sha256"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 
+	"github.com/romantomjak/env-vault/vault"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 )
@@ -47,25 +43,10 @@ var createCmd = &cobra.Command{
 			return err
 		}
 
-		// cipher key should be 32 bit long, so lets generate one by hashing password
-		key := sha256.Sum256(bytepw)
-
-		block, err := aes.NewCipher(key[:])
+		ciphertext, err := vault.Encrypt(bytes, bytepw)
 		if err != nil {
 			return err
 		}
-
-		aesGCM, err := cipher.NewGCM(block)
-		if err != nil {
-			return err
-		}
-
-		nonce := make([]byte, aesGCM.NonceSize())
-		if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
-			return err
-		}
-
-		ciphertext := aesGCM.Seal(nonce, nonce, bytes, nil)
 
 		if err := ioutil.WriteFile(args[0], ciphertext, 0700); err != nil {
 			return err
