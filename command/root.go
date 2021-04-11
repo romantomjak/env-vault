@@ -2,7 +2,6 @@ package command
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
@@ -33,13 +32,12 @@ with environment variables populated from an encrypted file.`,
 		}
 		fmt.Println()
 
-		filename := VaultFile
-		enc, err := ioutil.ReadFile(filename)
+		v, err := vault.Open(VaultFile, string(bytepw))
 		if err != nil {
 			return err
 		}
 
-		envs, err := vault.Decrypt(enc, bytepw)
+		plaintext, err := v.Read()
 		if err != nil {
 			return err
 		}
@@ -47,7 +45,7 @@ with environment variables populated from an encrypted file.`,
 		// TODO: add flag for stripping current env vars
 		newEnv := make([]string, 0)
 		newEnv = append(newEnv, os.Environ()...)
-		newEnv = append(newEnv, strings.Split(string(envs), "\n")...)
+		newEnv = append(newEnv, strings.Split(string(plaintext), "\n")...)
 
 		c := exec.Command(executable, args[1:]...)
 		c.Env = newEnv
