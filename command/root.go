@@ -35,11 +35,11 @@ func passwordPrompt(prompt string) ([]byte, error) {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "env-vault [vault] [command]",
+	Use:   "env-vault vault program",
 	Short: "Launch a subprocess with environment variables from an encrypted file",
 	Long: `env-vault provides a convenient way to launch a subprocess
 with environment variables populated from an encrypted file.`,
-	Args:                  cobra.ExactArgs(2),
+	Args:                  cobra.MinimumNArgs(2),
 	DisableFlagsInUseLine: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		executable, err := exec.LookPath(args[1])
