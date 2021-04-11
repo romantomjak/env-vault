@@ -18,7 +18,7 @@ var viewCmd = &cobra.Command{
 	Args:                  cobra.ExactArgs(1),
 	DisableFlagsInUseLine: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		password, err := passwordFromEnvOrPrompt()
+		password, err := passwordFromEnvOrPrompt("Password: ")
 		if err != nil {
 			return err
 		}

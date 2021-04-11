@@ -12,12 +12,12 @@ import (
 	"github.com/romantomjak/env-vault/vault"
 )
 
-func passwordFromEnvOrPrompt() ([]byte, error) {
+func passwordFromEnvOrPrompt(prompt string) ([]byte, error) {
 	envpassword := os.Getenv("ENV_VAULT_PASSWORD")
 	if len(envpassword) > 0 {
 		return []byte(envpassword), nil
 	}
-	return passwordPrompt("Password: ")
+	return passwordPrompt(prompt)
 }
 
 func passwordPrompt(prompt string) ([]byte, error) {
@@ -47,7 +47,7 @@ with environment variables populated from an encrypted file.`,
 			return err
 		}
 
-		password, err := passwordFromEnvOrPrompt()
+		password, err := passwordFromEnvOrPrompt("Password: ")
 		if err != nil {
 			return err
 		}
@@ -76,6 +76,7 @@ func Execute() error {
 	rootCmd.AddCommand(createCmd)
 	rootCmd.AddCommand(viewCmd)
 	rootCmd.AddCommand(editCmd)
+	rootCmd.AddCommand(rekeyCmd)
 
 	return rootCmd.Execute()
 }

@@ -17,12 +17,12 @@ var createCmd = &cobra.Command{
 	Args:                  cobra.ExactArgs(1),
 	DisableFlagsInUseLine: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		password, err := passwordPrompt("Password: ")
+		password, err := passwordPrompt("New password: ")
 		if err != nil {
 			return err
 		}
 
-		password2, err := passwordPrompt("Confirm new vault password: ")
+		password2, err := passwordPrompt("Confirm new password: ")
 		if err != nil {
 			return err
 		}
