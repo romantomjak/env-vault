@@ -43,12 +43,16 @@ var createCmd = &cobra.Command{
 			return err
 		}
 
-		ciphertext, err := vault.Encrypt(bytes, bytepw)
+		v, err := vault.Open(args[0], string(bytepw))
 		if err != nil {
 			return err
 		}
 
-		if err := ioutil.WriteFile(args[0], ciphertext, 0700); err != nil {
+		if _, err := v.Write(bytes); err != nil {
+			return err
+		}
+
+		if err = v.Close(); err != nil {
 			return err
 		}
 

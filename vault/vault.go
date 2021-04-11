@@ -6,7 +6,40 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"io"
+	"os"
 )
+
+type Vault struct {
+	file     *os.File
+	password string
+}
+
+func Open(filename, password string) (*Vault, error) {
+	f, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE, 0700)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: check file header
+
+	v := &Vault{
+		file:     f,
+		password: password,
+	}
+	return v, nil
+}
+
+func (v *Vault) Write(b []byte) (n int, err error) {
+	cipherText, err := Encrypt(b, []byte(v.password))
+	if err != nil {
+		return 0, err
+	}
+	return v.file.Write(cipherText)
+}
+
+func (v *Vault) Close() error {
+	return v.file.Close()
+}
 
 // cipher key should be 32 bit long, so lets generate one by hashing password
 func cipherKey(password []byte) []byte {
