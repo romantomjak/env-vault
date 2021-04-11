@@ -32,18 +32,18 @@ func Encrypt(bytes, password []byte) ([]byte, error) {
 	return ciphertext, nil
 }
 
-func Decrypt(enc, password []byte) (string, error) {
+func Decrypt(enc, password []byte) ([]byte, error) {
 	// cipher key should be 32 bit long, so lets generate one by hashing password
 	key := sha256.Sum256(password)
 
 	block, err := aes.NewCipher(key[:])
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	aesGCM, err := cipher.NewGCM(block)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	nonceSize := aesGCM.NonceSize()
@@ -52,8 +52,8 @@ func Decrypt(enc, password []byte) (string, error) {
 
 	plaintext, err := aesGCM.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return string(plaintext), nil
+	return plaintext, nil
 }
