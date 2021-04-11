@@ -1,6 +1,7 @@
 package command
 
 import (
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -20,6 +21,18 @@ var createCmd = &cobra.Command{
 		bytepw, err := term.ReadPassword(int(os.Stdin.Fd()))
 		if err != nil {
 			return err
+		}
+		fmt.Println()
+
+		fmt.Fprintf(os.Stdin, "Confirm new vault password: ")
+		bytepwconfirm, err := term.ReadPassword(int(os.Stdin.Fd()))
+		if err != nil {
+			return err
+		}
+		fmt.Println()
+
+		if !bytes.Equal(bytepw, bytepwconfirm) {
+			return fmt.Errorf("passwords do not match")
 		}
 
 		file, err := ioutil.TempFile(os.TempDir(), "env-vault-*")
