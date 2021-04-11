@@ -86,6 +86,29 @@ POSTGRES_PASSWORD=passwordformyproject
 
 Wooo!!! :rocket:
 
+## Advanced Use
+
+You can further ease the workflow by setting an environment variable to use as the default password for decrypting vaults:
+
+```
+export ENV_VAULT_PASSWORD=somepassword
+```
+
+This works exceptionally well when paired with Makefiles:
+
+```Makefile
+up:
+	env-vault prod.env docker-compose -- up -d
+```
+
+so now you can run:
+
+```
+make up
+```
+
+and env-vault will take it from there to make it work automagically! :sparkles:
+
 ## Contributing
 
 You can contribute in many ways and not just by changing the code! If you have
