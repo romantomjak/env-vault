@@ -47,7 +47,7 @@ with environment variables populated from an encrypted file.`,
 		// TODO: add flag for stripping current env vars
 		newEnv := make([]string, 0)
 		newEnv = append(newEnv, os.Environ()...)
-		newEnv = append(newEnv, strings.Split(envs, "\n")...)
+		newEnv = append(newEnv, strings.Split(string(envs), "\n")...)
 
 		c := exec.Command(executable, args[1:]...)
 		c.Env = newEnv
