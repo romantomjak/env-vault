@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"io"
+	"io/ioutil"
 	"os"
 )
 
@@ -27,6 +28,14 @@ func Open(filename, password string) (*Vault, error) {
 		password: password,
 	}
 	return v, nil
+}
+
+func (v *Vault) Read() ([]byte, error) {
+	cipherText, err := ioutil.ReadAll(v.file)
+	if err != nil {
+		return nil, err
+	}
+	return Decrypt(cipherText, []byte(v.password))
 }
 
 func (v *Vault) Write(b []byte) (n int, err error) {

@@ -26,13 +26,17 @@ var viewCmd = &cobra.Command{
 		}
 		fmt.Println()
 
-		enc, err := ioutil.ReadFile(args[0])
+		v, err := vault.Open(args[0], string(bytepw))
 		if err != nil {
 			return err
 		}
 
-		plaintext, err := vault.Decrypt(enc, bytepw)
+		plaintext, err := v.Read()
 		if err != nil {
+			return err
+		}
+
+		if err = v.Close(); err != nil {
 			return err
 		}
 
