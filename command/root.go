@@ -6,23 +6,30 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/romantomjak/env-vault/vault"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
+
+	"github.com/romantomjak/env-vault/vault"
 )
 
-func passwordPrompt(prompt string, stdin, stdout *os.File) ([]byte, error) {
-	// check if ENVCOMPOSE_PASSWORD_FILE was set or otherwise ask for password
+func passwordFromEnvOrPrompt() ([]byte, error) {
+	envpassword := os.Getenv("ENV_VAULT_PASSWORD")
+	if len(envpassword) > 0 {
+		return []byte(envpassword), nil
+	}
+	return passwordPrompt("Password: ")
+}
 
-	fmt.Fprint(stdout, prompt)
+func passwordPrompt(prompt string) ([]byte, error) {
+	fmt.Fprint(os.Stdout, prompt)
 
-	password, err := term.ReadPassword(int(stdin.Fd()))
+	password, err := term.ReadPassword(int(os.Stdin.Fd()))
 	if err != nil {
 		return nil, err
 	}
 
 	// ReadPassword skips newline
-	fmt.Fprintln(stdout)
+	fmt.Fprintln(os.Stdout)
 
 	return password, nil
 }
@@ -40,7 +47,7 @@ with environment variables populated from an encrypted file.`,
 			return err
 		}
 
-		password, err := passwordPrompt("Password: ", os.Stdin, os.Stdout)
+		password, err := passwordFromEnvOrPrompt()
 		if err != nil {
 			return err
 		}

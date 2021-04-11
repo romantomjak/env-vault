@@ -4,8 +4,9 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/romantomjak/env-vault/vault"
 	"github.com/spf13/cobra"
+
+	"github.com/romantomjak/env-vault/vault"
 )
 
 var editCmd = &cobra.Command{
@@ -13,7 +14,7 @@ var editCmd = &cobra.Command{
 	Short: "Edit encrypted file",
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		password, err := passwordPrompt("Password: ", os.Stdin, os.Stdout)
+		password, err := passwordFromEnvOrPrompt()
 		if err != nil {
 			return err
 		}

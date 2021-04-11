@@ -5,8 +5,9 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/romantomjak/env-vault/vault"
 	"github.com/spf13/cobra"
+
+	"github.com/romantomjak/env-vault/vault"
 )
 
 const DefaultEditor = "vim"
@@ -16,7 +17,7 @@ var viewCmd = &cobra.Command{
 	Short: "View encrypted file",
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		password, err := passwordPrompt("Password: ", os.Stdin, os.Stdout)
+		password, err := passwordFromEnvOrPrompt()
 		if err != nil {
 			return err
 		}

@@ -6,8 +6,9 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/romantomjak/env-vault/vault"
 	"github.com/spf13/cobra"
+
+	"github.com/romantomjak/env-vault/vault"
 )
 
 var createCmd = &cobra.Command{
@@ -15,12 +16,12 @@ var createCmd = &cobra.Command{
 	Short: "Create new encrypted file",
 	Args:  cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		password, err := passwordPrompt("Password: ", os.Stdin, os.Stdout)
+		password, err := passwordPrompt("Password: ")
 		if err != nil {
 			return err
 		}
 
-		password2, err := passwordPrompt("Confirm new vault password: ", os.Stdin, os.Stdout)
+		password2, err := passwordPrompt("Confirm new vault password: ")
 		if err != nil {
 			return err
 		}
