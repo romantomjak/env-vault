@@ -28,7 +28,7 @@ func passwordPrompt(prompt string) ([]byte, error) {
 		return nil, err
 	}
 
-	// ReadPassword skips newline
+	// add newline skipped by term.ReadPassword
 	fmt.Fprintln(os.Stdout)
 
 	return password, nil
