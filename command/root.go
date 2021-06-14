@@ -40,7 +40,7 @@ func passwordPrompt(prompt string) ([]byte, error) {
 var pristineEnv bool
 
 var rootCmd = &cobra.Command{
-	Use:   "env-vault vault program",
+	Use:   "env-vault [options] vault program",
 	Short: "Launch a subprocess with environment variables from an encrypted file",
 	Long: `env-vault provides a convenient way to launch a subprocess
 with environment variables populated from an encrypted file.`,
