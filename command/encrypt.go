@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"os"
 
 	"github.com/spf13/cobra"
 
@@ -16,6 +17,11 @@ var encryptCmd = &cobra.Command{
 	Args:                  cobra.ExactArgs(1),
 	DisableFlagsInUseLine: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		_, err := os.Stat(args[0])
+		if os.IsNotExist(err) {
+			return err
+		}
+
 		password, err := passwordPrompt("New password: ")
 		if err != nil {
 			return err

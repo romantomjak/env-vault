@@ -15,6 +15,11 @@ var editCmd = &cobra.Command{
 	Args:                  cobra.ExactArgs(1),
 	DisableFlagsInUseLine: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		_, err := os.Stat(args[0])
+		if os.IsNotExist(err) {
+			return err
+		}
+
 		password, err := passwordFromEnvOrPrompt("Password: ")
 		if err != nil {
 			return err

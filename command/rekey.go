@@ -3,6 +3,7 @@ package command
 import (
 	"bytes"
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 
@@ -15,6 +16,11 @@ var rekeyCmd = &cobra.Command{
 	Args:                  cobra.ExactArgs(1),
 	DisableFlagsInUseLine: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		_, err := os.Stat(args[0])
+		if os.IsNotExist(err) {
+			return err
+		}
+
 		password, err := passwordFromEnvOrPrompt("Current password: ")
 		if err != nil {
 			return err
