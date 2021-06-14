@@ -2,6 +2,8 @@
 
 env-vault provides a convenient way to launch a program
 with environment variables populated from an encrypted file.
+Inspired by [ansible-vault](https://docs.ansible.com/ansible/latest/cli/ansible-vault.html)
+and [envconsul](https://github.com/hashicorp/envconsul).
 
 ## Installation
 
