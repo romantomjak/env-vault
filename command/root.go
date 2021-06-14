@@ -34,6 +34,11 @@ func passwordPrompt(prompt string) ([]byte, error) {
 	return password, nil
 }
 
+// pristineEnv is a command line flag that controls whether
+// the sub-process will inherit environment variables from
+// the current process. Defaults to false
+var pristineEnv bool
+
 var rootCmd = &cobra.Command{
 	Use:   "env-vault vault program",
 	Short: "Launch a subprocess with environment variables from an encrypted file",
@@ -57,9 +62,14 @@ with environment variables populated from an encrypted file.`,
 			return err
 		}
 
-		// TODO: add flag for stripping current env vars
 		newEnv := make([]string, 0)
-		newEnv = append(newEnv, os.Environ()...)
+
+		// by default sub-process will inherit current process environment
+		// variables unless specified otherwise
+		if !pristineEnv {
+			newEnv = append(newEnv, os.Environ()...)
+		}
+
 		newEnv = append(newEnv, strings.Split(string(vaultbytes), "\n")...)
 
 		c := exec.Command(executable, args[2:]...)
@@ -73,6 +83,8 @@ with environment variables populated from an encrypted file.`,
 }
 
 func Execute() error {
+	rootCmd.Flags().BoolVar(&pristineEnv, "pristine", false, "Only use values retrieved from vaults, do not inherit the existing environment variables")
+
 	rootCmd.AddCommand(createCmd)
 	rootCmd.AddCommand(viewCmd)
 	rootCmd.AddCommand(editCmd)
