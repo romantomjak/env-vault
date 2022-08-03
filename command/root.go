@@ -46,20 +46,22 @@ var rootCmd = &cobra.Command{
 with environment variables populated from an encrypted file.`,
 	Args:                  cobra.MinimumNArgs(2),
 	DisableFlagsInUseLine: true,
+	SilenceUsage:          true,
+	SilenceErrors:         true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		executable, err := exec.LookPath(args[1])
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		password, err := passwordFromEnvOrPrompt("Password: ")
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		vaultbytes, err := vault.ReadFile(args[0], password)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		newEnv := make([]string, 0)

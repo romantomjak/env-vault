@@ -19,41 +19,41 @@ var createCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		password, err := passwordPrompt("New password: ")
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		password2, err := passwordPrompt("Confirm new password: ")
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		if !bytes.Equal(password, password2) {
-			return fmt.Errorf("passwords do not match")
+			return fmt.Errorf("Error: passwords do not match")
 		}
 
 		file, err := ioutil.TempFile(os.TempDir(), "env-vault-*")
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		filename := file.Name()
 		defer os.Remove(filename)
 
 		if err = file.Close(); err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		if err = openFileInEditor(filename); err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		bytes, err := ioutil.ReadFile(filename)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		if err := vault.WriteFile(args[0], bytes, password); err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		return nil

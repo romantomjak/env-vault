@@ -1,6 +1,7 @@
 package command
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -20,22 +21,22 @@ var viewCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		_, err := os.Stat(args[0])
 		if os.IsNotExist(err) {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		password, err := passwordFromEnvOrPrompt("Password: ")
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		plaintext, err := vault.ReadFile(args[0], password)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		file, err := ioutil.TempFile(os.TempDir(), "env-vault-*")
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		filename := file.Name()
@@ -43,15 +44,15 @@ var viewCmd = &cobra.Command{
 
 		_, err = file.Write(plaintext)
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		if err = file.Close(); err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		if err = openFileInEditor(filename); err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		return nil

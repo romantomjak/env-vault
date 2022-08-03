@@ -19,30 +19,30 @@ var encryptCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		_, err := os.Stat(args[0])
 		if os.IsNotExist(err) {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		password, err := passwordPrompt("New password: ")
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		password2, err := passwordPrompt("Confirm new password: ")
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		if !bytes.Equal(password, password2) {
-			return fmt.Errorf("passwords do not match")
+			return fmt.Errorf("Error: passwords do not match")
 		}
 
 		plaintext, err := ioutil.ReadFile(args[0])
 		if err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		if err := vault.WriteFile(args[0], plaintext, password); err != nil {
-			return err
+			return fmt.Errorf("Error: %v", err)
 		}
 
 		return nil
