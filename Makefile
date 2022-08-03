@@ -1,6 +1,6 @@
 SHELL = bash
 PROJECT_ROOT := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
-VERSION := 0.2.0
+VERSION := 0.3.0
 GIT_COMMIT := $(shell git rev-parse --short HEAD)
 
 GO_PKGS := $(shell go list ./...)
