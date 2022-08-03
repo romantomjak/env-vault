@@ -73,9 +73,12 @@ func openFileInEditor(filename string) error {
 }
 
 func getPreferredEditor() string {
-	editor := os.Getenv("EDITOR")
-	if editor == "" {
+	switch {
+	case os.Getenv("ENV_VAULT_EDITOR") != "":
+		return os.Getenv("ENV_VAULT_EDITOR")
+	case os.Getenv("EDITOR") != "":
+		return os.Getenv("EDITOR")
+	default:
 		return DefaultEditor
 	}
-	return editor
 }
