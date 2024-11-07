@@ -7,10 +7,10 @@ and [envconsul](https://github.com/hashicorp/envconsul).
 
 ## Installation
 
-Download and install using go get:
+Download and install latest version using go install:
 
 ```sh
-go get -u github.com/romantomjak/env-vault
+go install github.com/romantomjak/env-vault@latest
 ```
 
 or grab a binary from [releases](https://github.com/romantomjak/env-vault/releases/latest) section!
