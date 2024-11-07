@@ -3,7 +3,6 @@ package command
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -31,7 +30,7 @@ var createCmd = &cobra.Command{
 			return fmt.Errorf("Error: passwords do not match")
 		}
 
-		file, err := ioutil.TempFile(os.TempDir(), "env-vault-*")
+		file, err := os.CreateTemp(os.TempDir(), "env-vault-*")
 		if err != nil {
 			return fmt.Errorf("Error: %v", err)
 		}
@@ -47,7 +46,7 @@ var createCmd = &cobra.Command{
 			return fmt.Errorf("Error: %v", err)
 		}
 
-		bytes, err := ioutil.ReadFile(filename)
+		bytes, err := os.ReadFile(filename)
 		if err != nil {
 			return fmt.Errorf("Error: %v", err)
 		}

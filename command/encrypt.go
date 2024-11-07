@@ -3,7 +3,6 @@ package command
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -36,7 +35,7 @@ var encryptCmd = &cobra.Command{
 			return fmt.Errorf("Error: passwords do not match")
 		}
 
-		plaintext, err := ioutil.ReadFile(args[0])
+		plaintext, err := os.ReadFile(args[0])
 		if err != nil {
 			return fmt.Errorf("Error: %v", err)
 		}

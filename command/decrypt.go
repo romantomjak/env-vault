@@ -2,7 +2,6 @@ package command
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -31,7 +30,7 @@ var decryptCmd = &cobra.Command{
 			return fmt.Errorf("Error: %v", err)
 		}
 
-		if err := ioutil.WriteFile(args[0], plaintext, 0700); err != nil {
+		if err := os.WriteFile(args[0], plaintext, 0700); err != nil {
 			return fmt.Errorf("Error: %v", err)
 		}
 

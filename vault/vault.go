@@ -9,12 +9,12 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
-	"io/ioutil"
+	"os"
 	"strings"
 )
 
 func ReadFile(filename string, password []byte) ([]byte, error) {
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func WriteFile(filename string, data, password []byte) error {
 
 	buf := bytes.NewBufferString(header)
 	buf.Write(body)
-	return ioutil.WriteFile(filename, buf.Bytes(), 0700)
+	return os.WriteFile(filename, buf.Bytes(), 0700)
 }
 
 func checkHeader(data []byte) error {

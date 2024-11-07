@@ -2,7 +2,6 @@ package command
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 
@@ -34,7 +33,7 @@ var viewCmd = &cobra.Command{
 			return fmt.Errorf("Error: %v", err)
 		}
 
-		file, err := ioutil.TempFile(os.TempDir(), "env-vault-*")
+		file, err := os.CreateTemp(os.TempDir(), "env-vault-*")
 		if err != nil {
 			return fmt.Errorf("Error: %v", err)
 		}

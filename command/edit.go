@@ -2,7 +2,6 @@ package command
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -31,7 +30,7 @@ var editCmd = &cobra.Command{
 			return fmt.Errorf("Error: %v", err)
 		}
 
-		file, err := ioutil.TempFile(os.TempDir(), "env-vault-*")
+		file, err := os.CreateTemp(os.TempDir(), "env-vault-*")
 		if err != nil {
 			return fmt.Errorf("Error: %v", err)
 		}
@@ -52,7 +51,7 @@ var editCmd = &cobra.Command{
 			return fmt.Errorf("Error: %v", err)
 		}
 
-		modifiedplaintext, err := ioutil.ReadFile(filename)
+		modifiedplaintext, err := os.ReadFile(filename)
 		if err != nil {
 			return fmt.Errorf("Error: %v", err)
 		}
