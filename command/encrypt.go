@@ -22,12 +22,12 @@ var encryptCmd = &cobra.Command{
 			return fmt.Errorf("Error: %v", err)
 		}
 
-		password, err := passwordPrompt("New password: ")
+		password, err := passwordFromEnvOrPrompt("New password: ")
 		if err != nil {
 			return fmt.Errorf("Error: %v", err)
 		}
 
-		password2, err := passwordPrompt("Confirm new password: ")
+		password2, err := passwordFromEnvOrPrompt("Confirm new password: ")
 		if err != nil {
 			return fmt.Errorf("Error: %v", err)
 		}
