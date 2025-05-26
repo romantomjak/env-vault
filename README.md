@@ -35,6 +35,10 @@ env-vault <vault> <program> -- <program-arg1> <program-arg2> <...>
 
 This section describes how to use env-vault to safely store secrets and then pass them on to docker-compose.
 
+:rotating_light: **IMPORTANT!** :rotating_light:
+
+Avoid naming your vault `.env`. Files with this name are automatically read by docker compose as input for [configuration interpolation](https://docs.docker.com/compose/how-tos/environment-variables/variable-interpolation/#env-file). Since the vault is encrypted, docker compose will fail to parse it and you’ll see a cryptic error.
+
 ### docker-compose.yml
 
 Please note the `POSTGRES_PASSWORD` field that is set only as a key. This tells docker-compose to resolve the value on the machine on which the compose is running on.
